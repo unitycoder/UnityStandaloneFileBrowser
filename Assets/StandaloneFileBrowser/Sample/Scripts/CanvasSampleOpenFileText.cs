@@ -6,11 +6,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
-using SFB;
 
-[RequireComponent(typeof(Button))]
-public class CanvasSampleOpenFileText : MonoBehaviour, IPointerDownHandler {
-    public Text output;
+namespace SFB.Samples
+{
+    [RequireComponent(typeof(Button))]
+    public class CanvasSampleOpenFileText : MonoBehaviour, IPointerDownHandler
+    {
+        public Text output;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
     //
@@ -28,35 +30,40 @@ public class CanvasSampleOpenFileText : MonoBehaviour, IPointerDownHandler {
         StartCoroutine(OutputRoutine(url));
     }
 #else
-    //
-    // Standalone platforms & editor
-    //
-    public void OnPointerDown(PointerEventData eventData) { }
+        //
+        // Standalone platforms & editor
+        //
+        public void OnPointerDown(PointerEventData eventData) { }
 
-    void Start() {
-        var button = GetComponent<Button>();
-        button.onClick.AddListener(OnClick);
-    }
-
-    private void OnClick() {
-        var paths = StandaloneFileBrowser.OpenFilePanel("Title", "", "txt", false);
-        if (paths.Length > 0) {
-            StartCoroutine(OutputRoutine(new System.Uri(paths[0]).AbsoluteUri));
+        void Start()
+        {
+            var button = GetComponent<Button>();
+            button.onClick.AddListener(OnClick);
         }
-    }
+
+        private void OnClick()
+        {
+            var paths = StandaloneFileBrowser.OpenFilePanel("Title", "", "txt", false);
+            if (paths.Length > 0)
+            {
+                StartCoroutine(OutputRoutine(new System.Uri(paths[0]).AbsoluteUri));
+            }
+        }
 #endif
 
-    private IEnumerator OutputRoutine(string url) {
-        UnityWebRequest www = UnityWebRequest.Get(url);
-        yield return www.SendWebRequest();
+        private IEnumerator OutputRoutine(string url)
+        {
+            UnityWebRequest www = UnityWebRequest.Get(url);
+            yield return www.SendWebRequest();
 
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError(www.error);
-        }
-        else
-        {
-            output.text = www.downloadHandler.text;
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError(www.error);
+            }
+            else
+            {
+                output.text = www.downloadHandler.text;
+            }
         }
     }
 }
